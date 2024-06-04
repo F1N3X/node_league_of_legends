@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rendu</title>
+</head>
+<body>
+    <form onsubmit="event.preventDefault()">
+        <div class="nom">
+            <label for="nom">Nom du champion</label>
+            <input type="text" id="nom" name="nom">
+        </div>
+
+        <div class="type">
+            <label for="type">Type de champion</label>
+            <select name="type" id="type">
+                <option value="Assassin">Assassin</option>
+                <option value="Combattant">Combattant</option>
+                <option value="Mage">Mage</option>
+                <option value="Tirreur">Tirreur</option>
+                <option value="Support">Support</option>
+                <option value="Tank">Tank</option>
+            </select>
+        </div>
+
+        <button onclick="createChampion()">Créer le champion</button>
+    </form>
+
+    <div class="champions"></div>
+
+
+    <script>
+        const createChampion = async () => {
+            let nom = document.querySelector('input[name="nom"]').value;
+            let type = document.querySelector('select[name="type"]').value;
+
+            console.log(nom, type);
+
+            await fetch('http://localhost:3000/champions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({name : nom, type : type})
+            })
+            window.location.href = `index.html`;
+        }
+
+
+        fetch(`http://localhost:3000/champions`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            let champions = document.querySelector('.champions');
+            data.forEach(champion => {
+                let championDiv = document.createElement('div');
+                championDiv.innerHTML = `
+                    <h2>${champion.name}</h2>
+                    <p>${champion.type}</p>
+                    <a href="champion.html?id=${champion.id}">Voir le champion</a>
+                `;
+                champions.appendChild(championDiv);
+            })
+        })
+    </script>
+</body>
+</html>

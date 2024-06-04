@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form onsubmit="event.preventDefault(); updateChampion()">
+        <div class="name">
+            <label for="nom">Nouveau nom</label>
+            <input type="text" id="nom" name="nom">
+        </div>
+
+        <div class="type">
+            <label for="type">Nouveau type</label>
+            <select name="type" id="type">
+                <option value="Assassin">Assassin</option>
+                <option value="Combattant">Combattant</option>
+                <option value="Mage">Mage</option>
+                <option value="Tirreur">Tirreur</option>
+                <option value="Support">Support</option>
+                <option value="Tank">Tank</option>
+            </select>
+        </div>
+
+        <button type="submit">Modifier le champion</button>
+    </form>
+
+    <script>
+        let url = window.location.search
+        console.log(url)
+        let id = new URLSearchParams(url).get('id')
+        console.log(id)
+
+        fetch(`http://localhost:3000/champions/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            let championName = document.querySelector('input[name="nom"]').value = data.name
+            let championType = document.querySelector('select[name="type"]').value = data.type
+            championName.value = data.name
+            championType.value = data.type
+        })
+
+        const updateChampion = async () => {
+            event.preventDefault()
+            let nom = document.querySelector('input[name="nom"]').value;
+            let type = document.querySelector('select[name="type"]').value;
+
+            let response = await fetch(`http://localhost:3000/champions/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({name : nom, type : type})
+            })
+            window.location.href = `index.html`;
+        }
+    
+    </script>
+    
+</body>
+</html>
